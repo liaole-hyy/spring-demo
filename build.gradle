@@ -1,0 +1,128 @@
+buildscript {
+    ext {
+        kotlin_version = '1.2.20'
+        spring_boot_version = '2.4.4'
+    }
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}")
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.4.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'maven'
+}
+
+allprojects {
+
+    group = 'com.example'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '1.8'
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        mavenCentral()
+        jcenter()
+    }
+}
+
+subprojects {
+
+}
+
+
+
+repositories {
+    mavenCentral()
+}
+//compile：该依赖是为了编译项目的源码
+//runtime：该依赖为了项目运行时的classes，默认情况下也是为了编译
+//testCompile:该依赖是为了编译项目测试的源码，默认情况下包括compile和runtime
+//testRuntime:该依赖是为了执行测试的case。默认情况下包括compile、runtime和testCompile
+
+dependencies {
+    //compile fileTree(dir: 'libs', include: ['*.jar'])  依赖文件目录下的jar
+    implementation   'org.springframework.boot:spring-boot-starter'
+    implementation   'org.springframework.boot:spring-boot-starter-web'
+    compile group:'commons-collections',name:'commons-collections',version:'3.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    implementation gradleApi()
+//    implementation localGroovy()
+}
+//修改MANIFEST.MF文件中的内容
+//jar {
+//    manifest {
+//        attributes 'Implementation-Title': 'Gradle Quickstart',
+//                'Implementation-Version': version
+//    }
+//}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository url: uri('../liaole')
+        }
+    }
+}
+
+apply plugin: 'maven-publish'
+//publishing {
+//    publication
+//}
+//test {
+//    useJUnitPlatform()
+//    systemProperties 'property': 'value' //给任务添加系统属性
+//}
+
+//this.getAllprojects();
+
+//task createWebDir(){
+//    def paths = ['src/main/webapp']
+//}
+
+task hello{
+    doLast{
+        println 'hello world'
+    }
+}
+
+task hello1(dependsOn:hello){
+    println 'hello world1'
+}
+//task hello1 >> {
+//    println 'hello world'
+//}
+
+this.beforeEvaluate {
+    println '配置开始前'
+}
+
+//task run(type: JavaExec, dependsOn: 'classes') {
+//    description '运行指定main函数的java'
+//    classpath = sourceSets.main.runtimeClasspath
+//    if(project.hasProperty('main')){
+//        main = "com.example.${project.getProperty('main')}"
+//    }
+//}
+
+task(runMain, dependsOn: 'classes', type: JavaExec) {
+    main = 'com.example.demo.B'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runMainTest, dependsOn: 'classes', type: JavaExec) {
+    main = 'com.example.demo.MockTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
